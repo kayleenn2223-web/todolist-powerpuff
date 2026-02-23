@@ -46,7 +46,21 @@ if ($method === 'POST') {
 if ($method === 'POST' && $action === 'add') {
     $text = trim((string)($_POST['text'] ?? ''));
     if ($text !== '') {
-        $task = [
+
+    // ✅ VALIDASI DULU
+    if ($text === '') {
+        die("Tugas tidak boleh kosong!");
+    }
+
+    if (strlen($text) < 3) {
+        die("Tugas minimal 3 huruf!");
+    }
+
+    if (strlen($text) > 50) {
+        die("Tugas terlalu panjang!");
+    }
+    
+    $task = [
             'id' => uniqid('', true),
             'text' => htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
             'completed' => false,
