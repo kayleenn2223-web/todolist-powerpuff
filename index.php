@@ -124,7 +124,7 @@ if ($isAjax && $action === '') {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>To-Do List Sederhana</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <main class="container">
@@ -144,6 +144,6 @@ if ($isAjax && $action === '') {
 
     <footer class="help">Buka di XAMPP: http://localhost/to-do-list/</footer>
 </main>
-<script src="js/app.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
