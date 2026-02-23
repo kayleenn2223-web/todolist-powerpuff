@@ -1,0 +1,26 @@
+:root{
+  --bg:#f7f7fb;
+  --card:#ffffff;
+  --accent:#4f46e5;
+  --muted:#6b7280;
+}
+*{box-sizing:border-box;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif}
+body{margin:0;background:var(--bg);color:#111}
+.container{max-width:720px;margin:28px auto;padding:20px}
+h1{margin:0 0 12px;font-weight:600}
+form#addForm .row{display:flex;gap:8px}
+form input[type=text],form input[name=text],#text{flex:1;padding:10px;border:1px solid #e6e6f0;border-radius:8px}
+form button{background:var(--accent);color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer}
+.tasks{list-style:none;padding:0;margin:16px 0}
+.task{display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;background:var(--card);margin-bottom:8px;border:1px solid #eee}
+.task .text{flex:1}
+.task.done .text{text-decoration:line-through;color:var(--muted)}
+.inline{display:inline;margin:0;padding:0}
+.check,.delete{background:transparent;border:none;font-size:14px;cursor:pointer;padding:6px}
+.empty{color:var(--muted);padding:12px}
+.help{color:var(--muted);font-size:13px;margin-top:12px}
+
+@media (max-width:480px){
+  .container{padding:12px;margin:14px}
+  form button{padding:8px}
+}
