@@ -132,6 +132,11 @@ if ($isAjax && $action === '') {
 
     <form id="addForm" method="post" action="">
         <input type="hidden" name="action" value="add">
+        <div class="filter-group">
+    <button class="filter-btn active">Semua</button>
+    <button class="filter-btn">Belum</button>
+    <button class="filter-btn">Selesai</button>
+</div>
         <div class="row">
             <input id="text" name="text" placeholder="Tambah tugas baru..." autocomplete="off" required>
             <button type="submit">Tambah</button>

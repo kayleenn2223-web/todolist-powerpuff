@@ -1,1 +1,14 @@
-[]
+[
+    {
+        "id": "699db53369aef7.98129302",
+        "text": "Sejarah",
+        "completed": true,
+        "created_at": 1771943219
+    },
+    {
+        "id": "699db52e246fc6.48996744",
+        "text": "Bahsa",
+        "completed": false,
+        "created_at": 1771943214
+    }
+]
