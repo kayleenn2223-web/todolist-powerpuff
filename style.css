@@ -2,25 +2,84 @@
   --blossom-pink: #ff92ab;
   --bubbles-blue: #93d5ed;
   --buttercup-green: #97d700;
-  --chemical-x-black: #000000;
+  --white: #ffffff;
+  --dark: #333;
+  --shadow: rgba(0, 0, 0, 0.1);
 }
-*{box-sizing:border-box;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif}
-body{margin:0;background:var(--bg);color:#111}
-.container{max-width:720px;margin:28px auto;padding:20px}
-h1{margin:0 0 12px;font-weight:600}
-form#addForm .row{display:flex;gap:8px}
-form input[type=text],form input[name=text],#text{flex:1;padding:10px;border:1px solid #e6e6f0;border-radius:8px}
-form button{background:var(--accent);color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer}
-.tasks{list-style:none;padding:0;margin:16px 0}
-.task{display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;background:var(--card);margin-bottom:8px;border:1px solid #eee}
-.task .text{flex:1}
-.task.done .text{text-decoration:line-through;color:var(--muted)}
-.inline{display:inline;margin:0;padding:0}
-.check,.delete{background:transparent;border:none;font-size:14px;cursor:pointer;padding:6px}
-.empty{color:var(--muted);padding:12px}
-.help{color:var(--muted);font-size:13px;margin-top:12px}
 
-@media (max-width:480px){
-  .container{padding:12px;margin:14px}
-  form button{padding:8px}
+body {
+  background-color: #fce4ec; /* Pink muda yang lembut */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+.container {
+  background: var(--white);
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px var(--shadow);
+  width: 100%;
+  max-width: 400px;
+  border: 4px solid var(--blossom-pink); /* Border tebal khas kartun */
+}
+
+h1 {
+  color: var(--blossom-pink);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+input[type="text"] {
+  width: 70%;
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  outline: none;
+}
+
+button#add-btn {
+  padding: 10px 15px;
+  background-color: var(--bubbles-blue);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+button#add-btn:hover {
+  background-color: #7abccf;
+  transform: scale(1.05); /* Efek sedikit membesar saat hover */
+}
+ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+}
+
+li {
+  background: #f9f9f9;
+  margin-bottom: 10px;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-left: 5px solid var(--buttercup-green);
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+li:hover {
+  background: #f0f0f0;
+}
+
+.delete-btn {
+  color: #ff5c5c;
+  cursor: pointer;
+  font-weight: bold;
 }
