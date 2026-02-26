@@ -1,8 +1,8 @@
-:root{
-  --bg:#f7f7fb;
-  --card:#ffffff;
-  --accent:#4f46e5;
-  --muted:#6b7280;
+:root {
+  --blossom-pink: #ff92ab;
+  --bubbles-blue: #93d5ed;
+  --buttercup-green: #97d700;
+  --chemical-x-black: #000000;
 }
 *{box-sizing:border-box;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif}
 body{margin:0;background:var(--bg);color:#111}
