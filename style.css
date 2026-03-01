@@ -1,26 +1,243 @@
-:root{
-  --bg:#f7f7fb;
-  --card:#ffffff;
-  --accent:#4f46e5;
-  --muted:#6b7280;
+:root {
+  /* Warna baru yang lebih segar */
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --text-main: #1e293b;
+  --text-muted: #94a3b8;
+  --danger: #ef4444;
+  --success: #10b981;
+  --radius: 12px;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
-*{box-sizing:border-box;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif}
-body{margin:0;background:var(--bg);color:#111}
-.container{max-width:720px;margin:28px auto;padding:20px}
-h1{margin:0 0 12px;font-weight:600}
-form#addForm .row{display:flex;gap:8px}
-form input[type=text],form input[name=text],#text{flex:1;padding:10px;border:1px solid #e6e6f0;border-radius:8px}
-form button{background:var(--accent);color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer}
-.tasks{list-style:none;padding:0;margin:16px 0}
-.task{display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;background:var(--card);margin-bottom:8px;border:1px solid #eee}
-.task .text{flex:1}
-.task.done .text{text-decoration:line-through;color:var(--muted)}
-.inline{display:inline;margin:0;padding:0}
-.check,.delete{background:transparent;border:none;font-size:14px;cursor:pointer;padding:6px}
-.empty{color:var(--muted);padding:12px}
-.help{color:var(--muted);font-size:13px;margin-top:12px}
 
-@media (max-width:480px){
-  .container{padding:12px;margin:14px}
-  form button{padding:8px}
+* {
+  box-sizing: border-box;
+  font-family: 'Inter', -apple-system, sans-serif;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--text-main);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+.container {
+  width: 100%;
+  max-width: 480px; /* Ukuran lebih pas di tengah */
+  margin: 40px 20px;
+  padding: 32px;
+  background: var(--card);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  text-align: center;
+  letter-spacing: -0.5px;
+}
+
+/* Form Input yang lebih rapi */
+form#addForm .row {
+  display: flex;
+  gap: 10px;
+  background: #f1f5f9;
+  padding: 6px;
+  border-radius: var(--radius);
+}
+
+form input[type=text] {
+  flex: 1;
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 15px;
+}
+
+form button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 0 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+form button:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+/* List Task yang lebih interaktif */
+.tasks {
+  list-style: none;
+  padding: 0;
+  margin: 24px 0;
+}
+
+.task {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  background: var(--card);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  border: 1px solid #f1f5f9;
+  transition: all 0.2s;
+}
+
+.task:hover {
+  border-color: var(--accent);
+  transform: scale(1.01);
+}
+
+.task .text {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.task.done {
+  background: #f8fafc;
+  opacity: 0.7;
+}
+
+.task.done .text {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+/* Tombol Aksi */
+.check {
+  color: var(--success);
+  font-weight: bold;
+}
+
+.delete {
+  color: var(--danger);
+  font-weight: bold;
+}
+
+.check, .delete {
+  background: #f1f5f9;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.check:hover { background: #dcfce7; }
+.delete:hover { background: #fee2e2; }
+
+.empty {
+  text-align: center;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 20px;
+}
+
+.help {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-top: 20px;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 15px;
+}
+
+/* 1. Tambahan pada Container agar lebih elegan */
+.container {
+    transition: all 0.3s ease;
+}
+
+/* 2. Style Baru untuk Task Content (Tempat Teks & Jam) */
+.task-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.task-content .text {
+    font-size: 15px;
+    color: var(--text-main);
+    transition: all 0.3s ease;
+}
+
+/* 3. Style Jam Dibuat (Small) */
+.task-content small {
+    margin-top: 2px;
+    font-weight: 500;
+}
+
+/* 4. Animasi Masuk untuk setiap Task */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.task {
+    animation: fadeIn 0.3s ease forwards;
+    /* Tambahan Shadow Halus */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+/* 5. Tampilan Tombol Filter yang lebih keren */
+.filters {
+    background: #f1f5f9;
+    padding: 5px;
+    border-radius: 30px;
+    display: inline-flex; /* Agar kotak filter tidak selebar layar */
+    margin: 20px auto;
+    display: flex;
+    width: fit-content;
+}
+
+.filter-btn {
+    border: none;
+    background: transparent;
+    padding: 8px 18px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--muted);
+    transition: 0.3s;
+}
+
+.filter-btn.active {
+    background: white;
+    color: var(--accent);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* 6. Hover effect pada tombol hapus */
+.delete:hover {
+    background: #fee2e2 !important;
+    color: #ef4444;
+    transform: rotate(90deg); /* Efek putar sedikit saat mau dihapus */
+}
+
+/* 7. Indikator tugas selesai yang lebih manis */
+.task.done {
+    background: #fcfcfc;
+    border: 1px dashed #cbd5e1;
+}
+
+.task.done .check {
+    background: #dcfce7;
+    color: #10b981;
 }
