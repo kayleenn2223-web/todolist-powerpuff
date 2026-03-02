@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const addForm = document.getElementById('addForm');
     const tasksEl = document.getElementById('tasks');
+    let allTasks = [];
     let currentFilter = 'all';
 
     function fetchTasks() {
@@ -14,6 +15,18 @@ document.addEventListener('DOMContentLoaded', function () {
         const date = new Date(timestamp * 1000);
         return date.getHours().toString().padStart(2, '0') + ':' +
                date.getMinutes().toString().padStart(2, '0');
+    }
+
+    function applyFilter() {
+        let filtered = allTasks;
+
+        if (currentFilter === 'pending') {
+            filtered = allTasks.filter(t => !t.completed);
+        } else if (currentFilter === 'done') {
+            filtered = allTasks.filter(t => t.completed);
+        }
+
+        render(filtered);
     }
 
     function render(tasks) {
@@ -30,9 +43,6 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
             tasks.forEach(t => {
 
-                const status = t.completed ? 'done' : 'pending';
-                if (currentFilter !== 'all' && currentFilter !== status) return;
-
                 const li = document.createElement('li');
                 li.className = 'task' + (t.completed ? ' done' : '');
 
@@ -42,17 +52,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 toggleBtn.onclick = () => action('toggle', { id: t.id });
 
                 const contentDiv = document.createElement('div');
-                contentDiv.style.flex = '1';
-                contentDiv.style.marginLeft = '10px';
+                contentDiv.className = 'task-content';
 
                 const span = document.createElement('span');
                 span.className = 'text';
                 span.textContent = t.text;
 
                 const small = document.createElement('small');
-                small.style.display = 'block';
-                small.style.fontSize = '10px';
-                small.style.color = '#94a3b8';
                 small.textContent = 'Dibuat: ' + formatTime(t.created_at);
 
                 contentDiv.appendChild(span);
@@ -85,7 +91,10 @@ document.addEventListener('DOMContentLoaded', function () {
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
         .then(r => r.json())
-        .then(render)
+        .then(tasks => {
+            allTasks = tasks;
+            applyFilter();
+        })
         .catch(console.error);
     }
 
@@ -93,18 +102,28 @@ document.addEventListener('DOMContentLoaded', function () {
         e.preventDefault();
         const text = (this.text.value || '').trim();
         if (!text) return;
+
         action('add', { text });
         this.text.value = '';
     });
 
     document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            document.querySelector('.filter-btn.active').classList.remove('active');
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            document.querySelectorAll('.filter-btn')
+                .forEach(b => b.classList.remove('active'));
+
             this.classList.add('active');
             currentFilter = this.dataset.filter;
-            fetchTasks().then(render);
+
+            applyFilter();
         });
     });
 
-    fetchTasks().then(render);
+    fetchTasks().then(tasks => {
+        allTasks = tasks;
+        applyFilter();
+    });
+
 });

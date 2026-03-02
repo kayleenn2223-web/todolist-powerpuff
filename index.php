@@ -47,32 +47,26 @@ $action = ($method === 'POST') ? ($_POST['action'] ?? '') : ($_GET['action'] ?? 
 
 if ($method === 'POST' && $action === 'add') {
     $text = trim((string)($_POST['text'] ?? ''));
-    if ($text !== '') {
 
-    // ✅ VALIDASI DULU
-    if ($text === '') {
-        die("Tugas tidak boleh kosong!");
+    if ($text === '' || strlen($text) < 3 || strlen($text) > 50) {
+        if ($isAjax) { echo json_encode($tasks); exit; }
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit;
     }
 
-    if (strlen($text) < 3) {
-        die("Tugas minimal 3 huruf!");
-    }
-
-    if (strlen($text) > 50) {
-        die("Tugas terlalu panjang!");
-    }
-    
     $task = [
-            'id' => uniqid('', true),
-            'text' => $text,
-            'completed' => false,
-            'created_at' => time(),
-        ];
-        array_unshift($tasks, $task);
-        save_tasks($dataFile, $tasks);
-    }
+        'id' => uniqid('', true),
+        'text' => $text,
+        'completed' => false,
+        'created_at' => time(),
+    ];
+
+    array_unshift($tasks, $task);
+    save_tasks($dataFile, $tasks);
+
     if ($isAjax) { header('Content-Type: application/json'); echo json_encode($tasks); exit; }
-    header('Location: ' . $_SERVER['PHP_SELF']); exit;
+    header('Location: ' . $_SERVER['PHP_SELF']); 
+    exit;
 }
 
 if ($action === 'toggle' && ($id = $_POST['id'] ?? $_GET['id'] ?? '')) {
@@ -83,19 +77,23 @@ if ($action === 'toggle' && ($id = $_POST['id'] ?? $_GET['id'] ?? '')) {
         }
     }
     save_tasks($dataFile, $tasks);
+
     if ($isAjax) { header('Content-Type: application/json'); echo json_encode($tasks); exit; }
-    header('Location: ' . $_SERVER['PHP_SELF']); exit;
+    header('Location: ' . $_SERVER['PHP_SELF']); 
+    exit;
 }
 
 if ($action === 'delete' && ($id = $_POST['id'] ?? $_GET['id'] ?? '')) {
     $tasks = array_values(array_filter($tasks, function ($t) use ($id) {
         return $t['id'] !== $id;
     }));
-    save_tasks($dataFile, $tasks);
-    if ($isAjax) { header('Content-Type: application/json'); echo json_encode($tasks); exit; }
-    header('Location: ' . $_SERVER['PHP_SELF']); exit;
-}
 
+    save_tasks($dataFile, $tasks);
+
+    if ($isAjax) { header('Content-Type: application/json'); echo json_encode($tasks); exit; }
+    header('Location: ' . $_SERVER['PHP_SELF']); 
+    exit;
+}
 ?>
 <!doctype html>
 <html lang="id">
@@ -109,41 +107,23 @@ if ($action === 'delete' && ($id = $_POST['id'] ?? $_GET['id'] ?? '')) {
 
 <body>
 
-<nav class="navbar">
-    <div class="navbar-content">
-        <h2 class="navbar-brand">📝 TodoList PowerPuff</h2>
-        <div class="navbar-user">
-            <div class="user-info">
-                <p class="user-name"><?= htmlspecialchars($_SESSION['user_name']) ?></p>
-                <p class="user-email"><?= htmlspecialchars($_SESSION['user_email']) ?></p>
-            </div>
-            <div class="user-avatar">
-                <?= strtoupper(substr($_SESSION['user_name'], 0, 1)) ?>
-            </div>
-            <a href="logout.php" class="btn-logout">Logout</a>
-        </div>
-    </div>
-</nav>
-
 <main class="container">
     <h1>My Tasks</h1>
-    <p class="greeting">
-        Halo, <?= htmlspecialchars(explode(' ', $_SESSION['user_name'])[0]) ?>!
-    </p>
 
     <form id="addForm" method="post">
         <input type="hidden" name="action" value="add">
+
+        <nav class="filters">
+            <button class="filter-btn active" data-filter="all">Semua</button>
+            <button class="filter-btn" data-filter="pending">Belum</button>
+            <button class="filter-btn" data-filter="done">Selesai</button>
+        </nav>
+
         <div class="row">
             <input name="text" placeholder="Tambah tugas baru..." required>
             <button type="submit">Tambah</button>
         </div>
     </form>
-
-    <nav class="filters">
-        <button class="filter-btn active" data-filter="all">Semua</button>
-        <button class="filter-btn" data-filter="pending">Belum</button>
-        <button class="filter-btn" data-filter="done">Selesai</button>
-    </nav>
 
     <section id="tasks"></section>
 
