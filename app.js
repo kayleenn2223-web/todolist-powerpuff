@@ -1,92 +1,110 @@
 document.addEventListener('DOMContentLoaded', function () {
-  const addForm = document.getElementById('addForm');
-  const tasksEl = document.getElementById('tasks');
 
-  function fetchTasks() {
-    return fetch(window.location.pathname, {headers:{'X-Requested-With':'XMLHttpRequest'}})
-      .then(r=>r.json())
-      .catch(err => {
-        console.error('Error fetching tasks:', err);
-        return [];
-      });
-  }
+    const addForm = document.getElementById('addForm');
+    const tasksEl = document.getElementById('tasks');
+    let currentFilter = 'all';
 
-  function render(tasks) {
-    if (!Array.isArray(tasks)) tasks = [];
-    const ul = document.createElement('ul'); 
-    ul.className = 'tasks';
-    
-    if (tasks.length === 0) {
-      const li = document.createElement('li'); 
-      li.className='empty'; 
-      li.textContent='Belum ada tugas. Tambah tugas di form di atas.'; 
-      ul.appendChild(li);
-    } else {
-      tasks.forEach(t=>{
-        const li = document.createElement('li'); 
-        li.className='task'+(t.completed? ' done':''); 
-        li.setAttribute('data-id', t.id);
-        
-        const toggle = document.createElement('button'); 
-        toggle.className='check'; 
-        toggle.textContent = t.completed? '↺':'✓';
-        toggle.addEventListener('click', (e)=>{ 
-          e.preventDefault(); 
-          action('toggle',{id:t.id}); 
-        });
-        
-        const span = document.createElement('span'); 
-        span.className='text'; 
-        span.textContent = t.text;
-        
-        const del = document.createElement('button'); 
-        del.className='delete'; 
-        del.textContent='✕'; 
-        del.addEventListener('click', (e)=>{ 
-          e.preventDefault(); 
-          action('delete',{id:t.id}); 
-        });
-        
-        li.appendChild(toggle);
-        li.appendChild(span);
-        li.appendChild(del);
-        ul.appendChild(li);
-      });
+    function fetchTasks() {
+        return fetch(window.location.pathname, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        }).then(r => r.json());
     }
-    tasksEl.innerHTML = ''; 
-    tasksEl.appendChild(ul);
-  }
 
-  function action(act, data) {
-    const fd = new FormData(); 
-    fd.append('action', act);
-    for (const k in data) fd.append(k, data[k]);
-    
-    fetch(window.location.pathname, {
-      method:'POST', 
-      body:fd, 
-      headers:{'X-Requested-With':'XMLHttpRequest'}
-    })
-      .then(r=>r.json())
-      .then(render)
-      .catch(err => {
-        console.error('Error during action:', err);
-        alert('Terjadi kesalahan. Silakan coba lagi.');
-      });
-  }
-
-  addForm.addEventListener('submit', function (e) {
-    e.preventDefault();
-    const text = (this.text.value || '').trim();
-    if (!text) {
-      alert('Tugas tidak boleh kosong');
-      return;
+    function formatTime(timestamp) {
+        const date = new Date(timestamp * 1000);
+        return date.getHours().toString().padStart(2, '0') + ':' +
+               date.getMinutes().toString().padStart(2, '0');
     }
-    action('add', {text});
-    this.text.value = '';
-    this.text.focus();
-  });
 
-  // initial load
-  fetchTasks().then(render).catch(()=>{});
+    function render(tasks) {
+        if (!Array.isArray(tasks)) tasks = [];
+
+        const ul = document.createElement('ul');
+        ul.className = 'tasks';
+
+        if (tasks.length === 0) {
+            const li = document.createElement('li');
+            li.className = 'empty';
+            li.textContent = 'Belum ada tugas.';
+            ul.appendChild(li);
+        } else {
+            tasks.forEach(t => {
+
+                const status = t.completed ? 'done' : 'pending';
+                if (currentFilter !== 'all' && currentFilter !== status) return;
+
+                const li = document.createElement('li');
+                li.className = 'task' + (t.completed ? ' done' : '');
+
+                const toggleBtn = document.createElement('button');
+                toggleBtn.className = 'check';
+                toggleBtn.textContent = t.completed ? '↺' : '✓';
+                toggleBtn.onclick = () => action('toggle', { id: t.id });
+
+                const contentDiv = document.createElement('div');
+                contentDiv.style.flex = '1';
+                contentDiv.style.marginLeft = '10px';
+
+                const span = document.createElement('span');
+                span.className = 'text';
+                span.textContent = t.text;
+
+                const small = document.createElement('small');
+                small.style.display = 'block';
+                small.style.fontSize = '10px';
+                small.style.color = '#94a3b8';
+                small.textContent = 'Dibuat: ' + formatTime(t.created_at);
+
+                contentDiv.appendChild(span);
+                contentDiv.appendChild(small);
+
+                const delBtn = document.createElement('button');
+                delBtn.className = 'delete';
+                delBtn.textContent = '✕';
+                delBtn.onclick = () => action('delete', { id: t.id });
+
+                li.appendChild(toggleBtn);
+                li.appendChild(contentDiv);
+                li.appendChild(delBtn);
+                ul.appendChild(li);
+            });
+        }
+
+        tasksEl.innerHTML = '';
+        tasksEl.appendChild(ul);
+    }
+
+    function action(act, data) {
+        const fd = new FormData();
+        fd.append('action', act);
+        for (const k in data) fd.append(k, data[k]);
+
+        fetch(window.location.pathname, {
+            method: 'POST',
+            body: fd,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(render)
+        .catch(console.error);
+    }
+
+    addForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const text = (this.text.value || '').trim();
+        if (!text) return;
+        action('add', { text });
+        this.text.value = '';
+    });
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelector('.filter-btn.active').classList.remove('active');
+            this.classList.add('active');
+            currentFilter = this.dataset.filter;
+            fetchTasks().then(render);
+        });
+    });
+
+    fetchTasks().then(render);
 });
