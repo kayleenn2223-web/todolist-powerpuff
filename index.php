@@ -1,6 +1,13 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit();
+}
+
 $dataDir = __DIR__ . '/data';
-$dataFile = $dataDir . '/tasks.json';
+$dataFile = $dataDir . '/tasks_' . preg_replace('/[^a-z0-9_]/i', '', $_SESSION['user_id']) . '.json';
 
 if (!is_dir($dataDir)) {
     mkdir($dataDir, 0755, true);
@@ -31,37 +38,41 @@ function save_tasks($file, $tasks)
     return true;
 }
 
-$isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+$isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+          strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 
 $tasks = load_tasks($dataFile);
-
 $method = $_SERVER['REQUEST_METHOD'];
-$action = '';
-if ($method === 'POST') {
-    $action = isset($_POST['action']) ? $_POST['action'] : '';
-} elseif ($method === 'GET') {
-    $action = isset($_GET['action']) ? $_GET['action'] : '';
-}
+$action = ($method === 'POST') ? ($_POST['action'] ?? '') : ($_GET['action'] ?? '');
 
 if ($method === 'POST' && $action === 'add') {
     $text = trim((string)($_POST['text'] ?? ''));
     if ($text !== '') {
-        $task = [
+
+    // ✅ VALIDASI DULU
+    if ($text === '') {
+        die("Tugas tidak boleh kosong!");
+    }
+
+    if (strlen($text) < 3) {
+        die("Tugas minimal 3 huruf!");
+    }
+
+    if (strlen($text) > 50) {
+        die("Tugas terlalu panjang!");
+    }
+    
+    $task = [
             'id' => uniqid('', true),
-            'text' => htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
+            'text' => $text,
             'completed' => false,
             'created_at' => time(),
         ];
         array_unshift($tasks, $task);
         save_tasks($dataFile, $tasks);
     }
-    if ($isAjax) {
-        header('Content-Type: application/json');
-        echo json_encode($tasks);
-        exit;
-    }
-    header('Location: ' . $_SERVER['PHP_SELF']);
-    exit;
+    if ($isAjax) { header('Content-Type: application/json'); echo json_encode($tasks); exit; }
+    header('Location: ' . $_SERVER['PHP_SELF']); exit;
 }
 
 if ($action === 'toggle' && ($id = $_POST['id'] ?? $_GET['id'] ?? '')) {
@@ -77,73 +88,70 @@ if ($action === 'toggle' && ($id = $_POST['id'] ?? $_GET['id'] ?? '')) {
 }
 
 if ($action === 'delete' && ($id = $_POST['id'] ?? $_GET['id'] ?? '')) {
-    $tasks = array_values(array_filter($tasks, function ($t) use ($id) { return $t['id'] !== $id; }));
+    $tasks = array_values(array_filter($tasks, function ($t) use ($id) {
+        return $t['id'] !== $id;
+    }));
     save_tasks($dataFile, $tasks);
     if ($isAjax) { header('Content-Type: application/json'); echo json_encode($tasks); exit; }
     header('Location: ' . $_SERVER['PHP_SELF']); exit;
 }
 
-function render_tasks_html($tasks)
-{
-    ob_start();
-    ?>
-    <ul class="tasks">
-        <?php if (empty($tasks)) : ?>
-            <li class="empty">Belum ada tugas. Tambah tugas di form di atas.</li>
-        <?php else: foreach ($tasks as $t): ?>
-            <li data-id="<?= $t['id'] ?>" class="task <?= $t['completed'] ? 'done' : '' ?>">
-                <form class="inline action-toggle" method="post" action="">
-                    <input type="hidden" name="action" value="toggle">
-                    <input type="hidden" name="id" value="<?= $t['id'] ?>">
-                    <button type="submit" class="check"><?= $t['completed'] ? '↺' : '✓' ?></button>
-                </form>
-                <span class="text"><?= $t['text'] ?></span>
-                <form class="inline action-delete" method="post" action="">
-                    <input type="hidden" name="action" value="delete">
-                    <input type="hidden" name="id" value="<?= $t['id'] ?>">
-                    <button type="submit" class="delete">✕</button>
-                </form>
-            </li>
-        <?php endforeach; endif; ?>
-    </ul>
-    <?php
-    return ob_get_clean();
-}
-
-$tasksHtml = render_tasks_html($tasks);
-
-if ($isAjax && $action === '') {
-    header('Content-Type: application/json');
-    echo json_encode($tasks);
-    exit;
-}
 ?>
 <!doctype html>
 <html lang="id">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>To-Do List Sederhana</title>
-    <link rel="stylesheet" href="css/style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TodoList PowerPuff - My Tasks</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-<main class="container">
-    <h1>To‑Do List</h1>
 
-    <form id="addForm" method="post" action="">
+<body>
+
+<nav class="navbar">
+    <div class="navbar-content">
+        <h2 class="navbar-brand">📝 TodoList PowerPuff</h2>
+        <div class="navbar-user">
+            <div class="user-info">
+                <p class="user-name"><?= htmlspecialchars($_SESSION['user_name']) ?></p>
+                <p class="user-email"><?= htmlspecialchars($_SESSION['user_email']) ?></p>
+            </div>
+            <div class="user-avatar">
+                <?= strtoupper(substr($_SESSION['user_name'], 0, 1)) ?>
+            </div>
+            <a href="logout.php" class="btn-logout">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container">
+    <h1>My Tasks</h1>
+    <p class="greeting">
+        Halo, <?= htmlspecialchars(explode(' ', $_SESSION['user_name'])[0]) ?>!
+    </p>
+
+    <form id="addForm" method="post">
         <input type="hidden" name="action" value="add">
         <div class="row">
-            <input id="text" name="text" placeholder="Tambah tugas baru..." autocomplete="off" required>
+            <input name="text" placeholder="Tambah tugas baru..." required>
             <button type="submit">Tambah</button>
         </div>
     </form>
 
-    <section id="tasks">
-        <?= $tasksHtml ?>
-    </section>
+    <nav class="filters">
+        <button class="filter-btn active" data-filter="all">Semua</button>
+        <button class="filter-btn" data-filter="pending">Belum</button>
+        <button class="filter-btn" data-filter="done">Selesai</button>
+    </nav>
 
-    <footer class="help">Buka di XAMPP: http://localhost/to-do-list/</footer>
+    <section id="tasks"></section>
+
+    <footer class="help">
+        © 2026 TodoList PowerPuff
+    </footer>
 </main>
-<script src="js/app.js"></script>
+
+<script src="app.js"></script>
 </body>
 </html>

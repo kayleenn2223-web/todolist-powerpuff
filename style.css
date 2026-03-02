@@ -1,85 +1,229 @@
 :root {
-  --blossom-pink: #ff92ab;
-  --bubbles-blue: #93d5ed;
-  --buttercup-green: #97d700;
-  --white: #ffffff;
-  --dark: #333;
-  --shadow: rgba(0, 0, 0, 0.1);
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --text-main: #1e293b;
+  --text-muted: #94a3b8;
+  --danger: #ef4444;
+  --success: #10b981;
+  --radius: 12px;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+            0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+  font-family: 'Inter', -apple-system, sans-serif;
 }
 
 body {
-  background-color: #fce4ec; /* Pink muda yang lembut */
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--text-main);
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
+  align-items: flex-start;
+  min-height: 100vh;
 }
+
+/* ===== CONTAINER ===== */
+
 .container {
-  background: var(--white);
-  padding: 2rem;
-  border-radius: 20px;
-  box-shadow: 0 10px 25px var(--shadow);
   width: 100%;
-  max-width: 400px;
-  border: 4px solid var(--blossom-pink); /* Border tebal khas kartun */
+  max-width: 480px;
+  margin: 40px 20px;
+  padding: 32px;
+  background: var(--card);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
 }
 
 h1 {
-  color: var(--blossom-pink);
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
   text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 20px;
-}
-input[type="text"] {
-  width: 70%;
-  padding: 10px;
-  border: 2px solid #ddd;
-  border-radius: 10px;
-  outline: none;
+  letter-spacing: -0.5px;
 }
 
-button#add-btn {
-  padding: 10px 15px;
-  background-color: var(--bubbles-blue);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: transform 0.2s, background-color 0.2s;
-}
+/* ===== FORM ===== */
 
-button#add-btn:hover {
-  background-color: #7abccf;
-  transform: scale(1.05); /* Efek sedikit membesar saat hover */
-}
-ul {
-  list-style: none;
-  padding: 0;
-  margin-top: 20px;
-}
-
-li {
-  background: #f9f9f9;
-  margin-bottom: 10px;
-  padding: 12px;
+form#addForm .row {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-left: 5px solid var(--buttercup-green);
-  border-radius: 5px;
+  gap: 10px;
+  background: #f1f5f9;
+  padding: 6px;
+  border-radius: var(--radius);
+}
+
+form input[type=text] {
+  flex: 1;
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 15px;
+}
+
+form button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 0 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+form button:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+/* ===== FILTER ===== */
+
+.filters {
+  background: #f1f5f9;
+  padding: 5px;
+  border-radius: 30px;
+  display: flex;
+  width: fit-content;
+  margin: 20px auto;
+}
+
+.filter-btn {
+  border: none;
+  background: transparent;
+  padding: 8px 18px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-muted);
   transition: 0.3s;
 }
 
-li:hover {
-  background: #f0f0f0;
+.filter-btn.active {
+  background: white;
+  color: var(--accent);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-.delete-btn {
-  color: #ff5c5c;
+/* ===== TASK LIST ===== */
+
+.tasks {
+  list-style: none;
+  padding: 0;
+  margin: 24px 0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.task {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  background: var(--card);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  border: 1px solid #f1f5f9;
+  transition: all 0.2s;
+  animation: fadeIn 0.3s ease forwards;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.task:hover {
+  border-color: var(--accent);
+  transform: scale(1.01);
+}
+
+.task-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.task .text {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.task-content small {
+  margin-top: 2px;
+  font-weight: 500;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ===== TASK DONE ===== */
+
+.task.done {
+  background: #fcfcfc;
+  border: 1px dashed #cbd5e1;
+  opacity: 0.8;
+}
+
+.task.done .text {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.task.done .check {
+  background: #dcfce7;
+  color: var(--success);
+}
+
+/* ===== BUTTONS ===== */
+
+.check,
+.delete {
+  background: #f1f5f9;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.check {
+  color: var(--success);
+}
+
+.delete {
+  color: var(--danger);
+}
+
+.check:hover {
+  background: #dcfce7;
+}
+
+.delete:hover {
+  background: #fee2e2;
+  transform: rotate(90deg);
+}
+
+/* ===== EMPTY & FOOTER ===== */
+
+.empty {
+  text-align: center;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 20px;
+}
+
+.help {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-top: 20px;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 15px;
 }
