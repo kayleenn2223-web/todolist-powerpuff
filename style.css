@@ -1,5 +1,4 @@
 :root {
-  /* Warna baru yang lebih segar */
   --bg: #f8fafc;
   --card: #ffffff;
   --accent: #6366f1;
@@ -9,7 +8,8 @@
   --danger: #ef4444;
   --success: #10b981;
   --radius: 12px;
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+            0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 * {
@@ -27,14 +27,17 @@ body {
   min-height: 100vh;
 }
 
+/* ===== CONTAINER ===== */
+
 .container {
   width: 100%;
-  max-width: 480px; /* Ukuran lebih pas di tengah */
+  max-width: 480px;
   margin: 40px 20px;
   padding: 32px;
   background: var(--card);
   border-radius: 20px;
   box-shadow: var(--shadow);
+  transition: all 0.3s ease;
 }
 
 h1 {
@@ -45,7 +48,8 @@ h1 {
   letter-spacing: -0.5px;
 }
 
-/* Form Input yang lebih rapi */
+/* ===== FORM ===== */
+
 form#addForm .row {
   display: flex;
   gap: 10px;
@@ -79,11 +83,45 @@ form button:hover {
   transform: translateY(-1px);
 }
 
-/* List Task yang lebih interaktif */
+/* ===== FILTER ===== */
+
+.filters {
+  background: #f1f5f9;
+  padding: 5px;
+  border-radius: 30px;
+  display: flex;
+  width: fit-content;
+  margin: 20px auto;
+}
+
+.filter-btn {
+  border: none;
+  background: transparent;
+  padding: 8px 18px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-muted);
+  transition: 0.3s;
+}
+
+.filter-btn.active {
+  background: white;
+  color: var(--accent);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* ===== TASK LIST ===== */
+
 .tasks {
   list-style: none;
   padding: 0;
   margin: 24px 0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .task {
@@ -95,6 +133,8 @@ form button:hover {
   margin-bottom: 12px;
   border: 1px solid #f1f5f9;
   transition: all 0.2s;
+  animation: fadeIn 0.3s ease forwards;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
 .task:hover {
@@ -102,15 +142,29 @@ form button:hover {
   transform: scale(1.01);
 }
 
+.task-content {
+  display: flex;
+  flex-direction: column;
+}
+
 .task .text {
-  flex: 1;
   font-size: 15px;
   font-weight: 500;
 }
 
+.task-content small {
+  margin-top: 2px;
+  font-weight: 500;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ===== TASK DONE ===== */
+
 .task.done {
-  background: #f8fafc;
-  opacity: 0.7;
+  background: #fcfcfc;
+  border: 1px dashed #cbd5e1;
+  opacity: 0.8;
 }
 
 .task.done .text {
@@ -118,18 +172,15 @@ form button:hover {
   color: var(--text-muted);
 }
 
-/* Tombol Aksi */
-.check {
+.task.done .check {
+  background: #dcfce7;
   color: var(--success);
-  font-weight: bold;
 }
 
+/* ===== BUTTONS ===== */
+
+.check,
 .delete {
-  color: var(--danger);
-  font-weight: bold;
-}
-
-.check, .delete {
   background: #f1f5f9;
   border: none;
   width: 32px;
@@ -139,11 +190,27 @@ form button:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s;
+  transition: all 0.2s;
 }
 
-.check:hover { background: #dcfce7; }
-.delete:hover { background: #fee2e2; }
+.check {
+  color: var(--success);
+}
+
+.delete {
+  color: var(--danger);
+}
+
+.check:hover {
+  background: #dcfce7;
+}
+
+.delete:hover {
+  background: #fee2e2;
+  transform: rotate(90deg);
+}
+
+/* ===== EMPTY & FOOTER ===== */
 
 .empty {
   text-align: center;
@@ -159,85 +226,4 @@ form button:hover {
   margin-top: 20px;
   border-top: 1px solid #f1f5f9;
   padding-top: 15px;
-}
-
-/* 1. Tambahan pada Container agar lebih elegan */
-.container {
-    transition: all 0.3s ease;
-}
-
-/* 2. Style Baru untuk Task Content (Tempat Teks & Jam) */
-.task-content {
-    display: flex;
-    flex-direction: column;
-}
-
-.task-content .text {
-    font-size: 15px;
-    color: var(--text-main);
-    transition: all 0.3s ease;
-}
-
-/* 3. Style Jam Dibuat (Small) */
-.task-content small {
-    margin-top: 2px;
-    font-weight: 500;
-}
-
-/* 4. Animasi Masuk untuk setiap Task */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.task {
-    animation: fadeIn 0.3s ease forwards;
-    /* Tambahan Shadow Halus */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-}
-
-/* 5. Tampilan Tombol Filter yang lebih keren */
-.filters {
-    background: #f1f5f9;
-    padding: 5px;
-    border-radius: 30px;
-    display: inline-flex; /* Agar kotak filter tidak selebar layar */
-    margin: 20px auto;
-    display: flex;
-    width: fit-content;
-}
-
-.filter-btn {
-    border: none;
-    background: transparent;
-    padding: 8px 18px;
-    border-radius: 25px;
-    cursor: pointer;
-    font-size: 13px;
-    color: var(--muted);
-    transition: 0.3s;
-}
-
-.filter-btn.active {
-    background: white;
-    color: var(--accent);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-/* 6. Hover effect pada tombol hapus */
-.delete:hover {
-    background: #fee2e2 !important;
-    color: #ef4444;
-    transform: rotate(90deg); /* Efek putar sedikit saat mau dihapus */
-}
-
-/* 7. Indikator tugas selesai yang lebih manis */
-.task.done {
-    background: #fcfcfc;
-    border: 1px dashed #cbd5e1;
-}
-
-.task.done .check {
-    background: #dcfce7;
-    color: #10b981;
 }
